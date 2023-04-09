@@ -71,43 +71,34 @@ void main(int argc, char* argv[]) {
 		pipesArr[0] = STDIN_FILENO;
 		pipesArr[callsCount * 2 - 1] = STDOUT_FILENO;
 
-		for (int i = 0; i < callsCount * 2; i++) {
-			printf("%d ", pipesArr[i]);
-		}
-		printf("\n");
-
 		for (int i = 0; i < callsCount; i++) {
 			int pid = fork();
 
 			switch (pid) {
 				case 0:
-					printf("In: %d, out: %d, process: %s\n", pipesArr[i * 2],
-						   pipesArr[i * 2 + 1], *calls[i]);
-					dup2(pipesArr[i * 2], STDIN_FILENO);
-					dup2(pipesArr[i * 2 + 1], STDOUT_FILENO);
+					int res1 = dup2(pipesArr[i * 2], STDIN_FILENO);
+					int res2 = dup2(pipesArr[i * 2 + 1], STDOUT_FILENO);
 
-					// Workaround for single pipe
-					if (i == 0) {
-						close(pipesArr[2]);
-						close(pipesArr[3]);
-					} else {
-						close(pipesArr[0]);
-						close(pipesArr[1]);
-					}
+					for (int i = 1; i < callsCount * 2 - 1; i++)
+						close(pipesArr[i]);
 
 					status = execvp(*calls[i], *(calls + i));
-					printf("Run failed with status code %d\n", status);
+					fprintf(stderr, "Run failed with status code %d\n", status);
 					exit(EXIT_FAILURE);
 				case -1:
 					printf("Fail while forking\n");
 					exit(EXIT_FAILURE);
 			}
 		}
+		for (int i = 1; i < callsCount * 2 - 1; i++) close(pipesArr[i]);
 		for (int i = 0; i < callsCount; i++) {
 			wait(&status);
-			printf("Stop waiting\n");
 			if (status)
-				printf("Child process exited with non-zero code %d\n", status);
+				fprintf(stderr, "Child process exited with non-zero code %d\n",
+						status);
+		}
+		for (int j = 1; j < callsCount * 2 - 1; j++) {
+			close(pipesArr[j]);
 		}
 	}
 }
