@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <time.h>
 
-int initGame(int* intentedNum, int* attempts);
+int initGame(int* intentedNum, int* attempts, double* coeff);
 
 void main() {
 	srand(time(NULL));
@@ -33,7 +33,8 @@ void main() {
 		}
 
 		int intentedNum, attempts;
-		initGame(&intentedNum, &attempts);
+		double coeff;
+		initGame(&intentedNum, &attempts, &coeff);
 
 		while (attempts > 0) {
 			printf("\tОсталось %d попыток\n> ", attempts);
@@ -48,7 +49,7 @@ void main() {
 		}
 		if (attempts > 0) {
 			printf("Вы угадали!\n");
-			money += bet;
+			money += bet * coeff;
 		} else {
 			printf("Вы не смогли угадать; ваши попытки кончились\n");
 			money -= bet;
@@ -70,7 +71,7 @@ void main() {
 	} while (playAgain);
 }
 
-int initGame(int* intentedNum, int* attempts) {
+int initGame(int* intentedNum, int* attempts, double* coeff) {
 	int low, high;
 
 	printf("Введите нижнюю границу\n> ");
@@ -90,9 +91,15 @@ int initGame(int* intentedNum, int* attempts) {
 
 	printf("Введите количество попыток ввода\n> ");
 	scanf("%d", attempts);
-	while (attempts < 1) {
+	while (*attempts < 1) {
 		printf("Должна быть хотя бы одна попытка. Повторите ввод\n> ");
 		scanf("%d", attempts);
 	}
 	printf("Количество попыток ввода: %d\n", *attempts);
+
+	*coeff = (high - low) / (double)*attempts;
+	printf(
+		"Коэффициент выигрыша, основанный на диапазоне и количестве попыток: "
+		"%.2f",
+		*coeff);
 }
