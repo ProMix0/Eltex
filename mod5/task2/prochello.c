@@ -38,8 +38,8 @@ ssize_t write_proc(struct file *filp, const char *buf, size_t count,
 	return len;
 }
 
-const struct proc_ops proc_fops = {.proc_read = read_proc,
-								   .proc_write = write_proc};
+static struct proc_ops proc_fops = {.proc_read = read_proc,
+									.proc_write = write_proc};
 
 int __init proc_init(void) {
 	proc_create("hello", 0666, NULL, &proc_fops);
