@@ -12,11 +12,6 @@ static: clean $(OBJECTS)
 	gcc main.o -L. -lf -o main
 	./main
 
-static-link: clean $(OBJECTS)
-	gcc -shared -o libf.so f1.o f2.o
-	gcc -static main.o -L. -lf -o main
-	./main
-
 dynamic: clean $(OBJECTS)
 	gcc -shared -o libf.so f1.o f2.o
 	gcc main.o -L. -lf -o main
