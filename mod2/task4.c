@@ -126,7 +126,7 @@ typedef struct nodePrint {
 void printTree(node* root) {
 	width(root);
 
-	// printNodeInfo(root);
+	printNodeInfo(root);
 
 	nodePrint *curr = malloc(sizeof(struct nodePrint)), *next;
 	int currCount = 1;
@@ -172,7 +172,7 @@ void main() {
 	int seed = time(0);
 	printf("Seed: %d\n", seed);
 	srand(seed);
-	node* root = newNode(rand());
-	for (int i = 0; i < 30; i++) insert(root, rand());
+	node* root = newNode(rand()%10);
+	for (int i = 0; i < 10; i++) insert(root, rand()%10);
 	printTree(root);
 }
